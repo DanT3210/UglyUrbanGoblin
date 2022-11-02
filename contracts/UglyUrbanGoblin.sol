@@ -9,10 +9,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   
   uint256 constant MAX_SUPPLY = 300;
-  uint8 maxTx = 10;
-  uint8 maxPerAccount = 20; 
+  uint8 public maxTx = 10;
+  uint8 public maxPerAccount = 20; 
   uint16 public maxSupply = 100;
-  uint256 artPrice;
+  uint256 public artPrice;
   string public name;
   string public symbol;
 

@@ -3,6 +3,7 @@ require('dotenv').config();
 require("@nomiclabs/hardhat-etherscan");
 require("./task/my_task");
 require("hardhat-deploy");
+//require("@nomicfoundation/hardhat-chai-matchers")
 
 //const RINKEBY_RPC_URL = process.env.RINKEBY_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key";
 const GOERLI_RPC_URL=process.env.GOERLI_RPC_URL || "https://eth-goerli.g.alchemy.com/v2/7aKFaFYTJuVBsJFGJadeeMs22gCI07Th";
