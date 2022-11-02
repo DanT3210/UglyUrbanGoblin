@@ -69,16 +69,16 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
     emit URI(_uri, _id);
   }
 
-  function uri(uint _id) public override view returns (string memory) {
+  /*function uri(uint _id) public override view returns (string memory) {
     return tokenURI[_id];
-  }
+  }*/
     
   /*function updateArtPrice(uint256 _newPrice)public onlyOwner{
     artPrice=_newPrice;
   }   */    
 
   function withdraw() public payable onlyOwner nonReentrant(){
-    require(payable(msg.sender).send(address(this).balance));
+    require(payable(_msgSender()).send(address(this).balance));
   }
 
 }
