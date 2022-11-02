@@ -29,7 +29,7 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
 
   receive() external payable {}
 
-  function mint(address _to, uint id, uint amount) external onlyOwner{
+  function mint(address _to, uint id, uint amount) external {
     uint256 currentTx=balanceOf(_to,id);
     require(amount > 0 && amount <= maxPerAccount, "Purchase: amount prohibited");
     uint256 _supply=currentTx+amount;
