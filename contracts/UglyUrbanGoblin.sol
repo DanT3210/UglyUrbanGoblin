@@ -46,7 +46,8 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
 
             uint256 id=ids[i];
             require(artSypply[id]<ART_SUPPLY, "MintBatch: Art max supply reached");
-            require(balanceOf(_to,id)+amounts[i]<=maxTx && amounts[id]<=maxTx, "MintBatch: Max/Tx reached");
+            //uint balance=balanceOf(_to,id);
+            //require(balance<=maxTx && amounts[id]<=maxTx, "MintBatch: Max/Tx reached");
 
             artSypply[id]+=amounts[i];
         }    
@@ -87,4 +88,3 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   }
 
 }
-    
