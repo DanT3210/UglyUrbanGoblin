@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   
-  uint8 public maxTx = 50;
-  uint8 public maxPerAccount = 20; 
+  uint8 public maxTx = 150;
+  uint8 public maxPerAccount = 50; 
   uint32 constant ART_SUPPLY=1000;
   uint256 public artPrice;
   string public name;
@@ -46,7 +46,7 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
 
             uint256 id=ids[i];
             require(artSypply[id]<ART_SUPPLY, "MintBatch: Mint max supply reached");
-            require(balanceOf(_to,id)+amounts[i]<=maxTx && amounts[id]<=maxTx, "MintBatch: Max/Tx supply reached");
+            require(balanceOf(_to,id)+amounts[i]<=maxTx && amounts[id]<=maxTx, "MintBatch: Max/Tx reached");
 
             artSypply[id]+=amounts[i];
         }    
