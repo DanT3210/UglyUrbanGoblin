@@ -30,11 +30,11 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   receive() external payable {}
 
   
-  function mint(address _to, uint id, uint amount) external {
+  function mint(address _to, uint id, uint amount) external payable{
     require(amount > 0 && amount <= maxPerAccount, "Mint: amount/Tx prohibited");
-    require(balanceOf(_to,id)+amount<=maxPerAccount, "Mint: Max supply/Tx reached");
-    require(artSypply[id]<ART_SUPPLY, "Mint: Mint max supply reached");
-    //require(msg.value>=artPrice*amount, "Purchase: Needs more funds");    
+    require(balanceOf(_to,id)+amount<=maxPerAccount, "Mint: Supply/Tx reached");
+    require(artSypply[id]<ART_SUPPLY, "Mint: Art max supply reached");
+    require(msg.value>=artPrice*amount, "Mint: Needs more funds");    
     _mint(_to, id, amount, "");
     artSypply[id]+=amount;
   }
@@ -45,7 +45,7 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
             require(amounts[i] > 0 && amounts[i] <= maxTx, "MintBatch: amount/Tx prohibited");
 
             uint256 id=ids[i];
-            require(artSypply[id]<ART_SUPPLY, "MintBatch: Mint max supply reached");
+            require(artSypply[id]<ART_SUPPLY, "MintBatch: Art max supply reached");
             require(balanceOf(_to,id)+amounts[i]<=maxTx && amounts[id]<=maxTx, "MintBatch: Max/Tx reached");
 
             artSypply[id]+=amounts[i];
@@ -70,9 +70,9 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
     emit URI(_uri, _id);
   }
 
-  /*function uri(uint _id) public override view returns (string memory) {
+  function uri(uint _id) public override view onlyOwner returns (string memory) {
     return tokenURI[_id];
-  }*/
+  }
     
   function updateArtPrice(uint256 _newPrice)public onlyOwner{
     artPrice=_newPrice;
