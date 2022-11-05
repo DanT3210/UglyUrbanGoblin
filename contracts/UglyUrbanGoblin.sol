@@ -5,8 +5,9 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
-contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
+contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard, PaymentSplitter {
   
   uint8 public maxTx = 150;
   uint8 public maxPerAccount = 50; 
@@ -21,16 +22,17 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   mapping(uint => string) private tokenURI;
 
 
-  constructor(string memory name_, string memory symbol_, uint256 artPrice_) ERC1155("") {
+  constructor(string memory name_, string memory symbol_, uint256 artPrice_, address[] memory payees, uint256[] memory shares_) 
+  ERC1155("") PaymentSplitter(payees,shares_){
     name = name_;//"UGLY URBAN GOLBLIN";
     symbol = symbol_;//"UUG";
     artPrice=artPrice_;//50000000000000000;
   } 
 
-  receive() external payable {}
+  //receive() external payable {}
 
   
-  function mint(address _to, uint id, uint amount) external payable{
+  function mint(address _to, uint id, uint amount) external payable nonReentrant(){
     require(amount > 0 && amount <= maxPerAccount, "Mint: amount/Tx prohibited");
     require(balanceOf(_to,id)+amount<=maxPerAccount, "Mint: Supply/Tx reached");
     require(artSypply[id]<ART_SUPPLY, "Mint: Art max supply reached");
