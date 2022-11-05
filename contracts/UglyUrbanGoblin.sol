@@ -5,9 +5,9 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
-contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard, PaymentSplitter {
+
+contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   
   uint8 public maxTx = 150;
   uint8 public maxPerAccount = 50; 
@@ -15,6 +15,7 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard, PaymentSplitter {
   uint256 public artPrice;
   string public name;
   string public symbol;
+  address payable paySplitter;
 
   // ID+QTY=>Total Supply per ID
   mapping(uint => uint)private artSypply;
@@ -22,11 +23,11 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard, PaymentSplitter {
   mapping(uint => string) private tokenURI;
 
 
-  constructor(string memory name_, string memory symbol_, uint256 artPrice_, address[] memory payees, uint256[] memory shares_) 
-  ERC1155("") PaymentSplitter(payees,shares_){
+  constructor(string memory name_, string memory symbol_, uint256 artPrice_, address _payment) ERC1155(""){
     name = name_;//"UGLY URBAN GOLBLIN";
-    symbol = symbol_;//"UUG";
+    symbol = symbol_;//"UUG"
     artPrice=artPrice_;//50000000000000000;
+    paySplitter = payable (_payment);
   } 
 
   //receive() external payable {}
