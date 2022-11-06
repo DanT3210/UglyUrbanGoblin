@@ -13,9 +13,10 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   uint8 public maxPerAccount = 50; 
   uint32 constant ART_SUPPLY=1000;
   uint256 public artPrice;
+  //uint256 private balance;
   string public name;
   string public symbol;
-  address payable paySplitter;
+  address payable public paySplitter;
 
   // ID+QTY=>Total Supply per ID
   mapping(uint => uint)private artSypply;
@@ -30,8 +31,6 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
     paySplitter = payable (_payment);
   } 
 
-  //receive() external payable {}
-
   
   function mint(address _to, uint id, uint amount) external payable nonReentrant(){
     require(amount > 0 && amount <= maxPerAccount, "Mint: amount/Tx prohibited");
@@ -40,6 +39,7 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
     require(msg.value>=artPrice*amount, "Mint: Needs more funds");    
     _mint(_to, id, amount, "");
     artSypply[id]+=amount;
+    transferFunds(msg.value);
   }
 
   function mintBatch(address _to, uint[] memory ids, uint[] memory amounts) external onlyOwner {
@@ -86,8 +86,8 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
     artPrice=_newPrice;
   }  
 
-  function withdraw() public payable onlyOwner nonReentrant(){
-    require(payable(_msgSender()).send(address(this).balance));
+  function transferFunds(uint256 balance) private{
+    require(payable(paySplitter).send(balance));
   }
 
 }
