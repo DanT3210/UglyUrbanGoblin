@@ -47,10 +47,10 @@ module.exports = {
   },  
   namedAccounts: {
     deployer: {
-        default: 0, // here this will by default take the first account as deployer
+      default: 0, // here this will by default take the first account as deployer
     },
     addr1:{
       default: 1,
     },
-},  
+  },  
 };
