@@ -9,9 +9,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   
-  uint8 constant private maxTx = 150;
-  uint8 constant private maxPerAccount = 50; 
-  uint32 constant private ART_SUPPLY=1000;
+  uint8 constant private maxTx = 100;
+  uint8 constant public maxPerAccount = 10; 
+  uint32 constant public ART_SUPPLY=100;
   uint256 private artPrice;
   string private name;
   string private symbol;
@@ -79,6 +79,10 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
 
   function totalArtSupply(uint id_) public view returns (uint) {
     return artSypply[id_];
+  }
+
+  function getArtPrice() public view returns(uint256){
+    return artPrice;
   }
     
   function updateArtPrice(uint256 _newPrice)public onlyOwner{
