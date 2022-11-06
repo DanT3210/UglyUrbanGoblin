@@ -14,12 +14,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const deployContract = await deploy('PaySplitter', {
     from: deployer,
     log: true,
-    args: [[deployer, "0x6d6257976bd82720A63fb1022cC68B6eE7c1c2B0"], [35, 65]],
+    args: [[deployer, addr1], [35, 65]],
     // we need to wait if on a live network so we can verify properly
     waitConfirmations: network.config.blockConfirmations || 1,
   })
   console.log("paySplit deployed to:", deployContract.address);
-  //console.log("Account Address 1:", addr1.address);
+  //console.log("Account Address 1:", addr1);
 }
 
 
