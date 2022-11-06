@@ -9,14 +9,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   
-  uint8 public maxTx = 150;
-  uint8 public maxPerAccount = 50; 
-  uint32 constant ART_SUPPLY=1000;
-  uint256 public artPrice;
-  //uint256 private balance;
-  string public name;
-  string public symbol;
-  address payable public paySplitter;
+  uint8 constant private maxTx = 150;
+  uint8 constant private maxPerAccount = 50; 
+  uint32 constant private ART_SUPPLY=1000;
+  uint256 private artPrice;
+  string private name;
+  string private symbol;
+  address payable private paySplitter;
 
   // ID+QTY=>Total Supply per ID
   mapping(uint => uint)private artSypply;
@@ -89,5 +88,4 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   function transferFunds(uint256 balance) private{
     require(payable(paySplitter).send(balance));
   }
-
 }
