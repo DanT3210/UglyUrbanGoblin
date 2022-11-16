@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   
-  uint8 constant private maxTx = 100;
-  uint8 constant public maxPerAccount = 10; 
+  uint8 constant private MAX_TX = 100;
+  uint8 constant public MAX_PER_ACCT = 10; 
   uint32 constant public ART_SUPPLY=100;
   uint256 private artPrice;
   string private name;
@@ -32,8 +32,8 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
 
   
   function mint(address _to, uint id, uint amount) external payable nonReentrant{
-    require(amount > 0 && amount <= maxPerAccount, "Mint: amount/Tx prohibited");
-    require(balanceOf(_to,id)+amount<=maxPerAccount, "Mint: Supply/Tx reached");
+    require(amount > 0 && amount <= MAX_PER_ACCT, "Mint: amount/Tx prohibited");
+    require(balanceOf(_to,id)+amount<=MAX_PER_ACCT, "Mint: Supply/Tx reached");
     require(artSypply[id]<ART_SUPPLY, "Mint: Art max supply reached");
     require(msg.value>=artPrice*amount, "Mint: Needs more funds");    
     _mint(_to, id, amount, "");
@@ -44,7 +44,7 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   function mintBatch(address _to, uint[] memory ids, uint[] memory amounts) external onlyOwner {
         for(uint256 i = 0; i < ids.length; i++){
             require(amounts.length == ids.length, "MintBatch: amounts and ids length mismatch");
-            require(amounts[i] > 0 && amounts[i] <= maxTx, "MintBatch: amount/Tx prohibited");
+            require(amounts[i] > 0 && amounts[i] <= MAX_TX, "MintBatch: amount/Tx prohibited");
 
             uint256 id=ids[i];
             require(artSypply[id]<ART_SUPPLY, "MintBatch: Art max supply reached");
