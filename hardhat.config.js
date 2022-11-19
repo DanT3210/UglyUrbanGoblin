@@ -1,9 +1,11 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('dotenv').config();
 require("@nomiclabs/hardhat-etherscan");
+require("@nomiclabs/hardhat-ethers");
 require("./task/my_task");
 require("hardhat-deploy");
 require('@openzeppelin/hardhat-upgrades');
+
 //require("@nomicfoundation/hardhat-chai-matchers")
 
 //const RINKEBY_RPC_URL = process.env.RINKEBY_RPC_URL || "https://eth-rinkeby.alchemyapi.io/v2/your-api-key";

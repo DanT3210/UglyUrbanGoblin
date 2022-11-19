@@ -2,16 +2,18 @@
 pragma solidity ^0.8.17;
 
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 
-contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
+contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   
-  uint8 constant private MAX_TX = 100;
-  uint8 constant public MAX_PER_ACCT = 10; 
-  uint32 constant public ART_SUPPLY=100;
+
+  uint256  public MAX_PER_ACCT; 
+  uint256  public ART_SUPPLY;
   uint256 private artPrice;
   string private name;
   string private symbol;
@@ -19,22 +21,28 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
 
   // ID+QTY=>Total Supply per ID
   mapping(uint => uint)private artSypply;
-  // ID+URI=> TOken URI per ID
+  // ID+URI=> Token URI per ID
   mapping(uint => string) private tokenURI;
 
-
-  constructor(string memory name_, string memory symbol_, uint256 artPrice_, address _payment) ERC1155(""){
-    name = name_;//"UGLY URBAN GOLBLIN";
-    symbol = symbol_;//"UUG"
-    artPrice=artPrice_;//50000000000000000;
+  function _initializableNFT(uint256 artPrice_, string memory name_, string memory symbol_, address _payment)public initializer{
+    artPrice=artPrice_;
+    name=name_;
+    symbol=symbol_;
     paySplitter = payable (_payment);
-  } 
 
+    __Ownable_init();
+    __UUPSUpgradeable_init();
+    __ReentrancyGuard_init();
+    __ERC1155_init("");    
+  }
+
+  ///@dev required by the OZ UUPS module
+  function _authorizeUpgrade(address) internal override onlyOwner {}
   
   function mint(address _to, uint id, uint amount) external payable nonReentrant{
-    require(amount > 0 && amount <= MAX_PER_ACCT, "Mint: amount/Tx prohibited");
-    require(balanceOf(_to,id)+amount<=MAX_PER_ACCT, "Mint: Supply/Tx reached");
-    require(artSypply[id]<ART_SUPPLY, "Mint: Art max supply reached");
+    require(amount > 0, "Mint: amount/Tx prohibited");
+    require(balanceOf(_to,id)+amount < 101, "Mint: Supply/Tx reached");
+    require(artSypply[id]<1000, "Mint: Art max supply reached");
     require(msg.value>=artPrice*amount, "Mint: Needs more funds");    
     _mint(_to, id, amount, "");
     artSypply[id]+=amount;
@@ -44,10 +52,10 @@ contract UglyUrbanGoblin is ERC1155, Ownable, ReentrancyGuard {
   function mintBatch(address _to, uint[] memory ids, uint[] memory amounts) external onlyOwner {
         for(uint256 i = 0; i < ids.length; i++){
             require(amounts.length == ids.length, "MintBatch: amounts and ids length mismatch");
-            require(amounts[i] > 0 && amounts[i] <= MAX_TX, "MintBatch: amount/Tx prohibited");
+            require(amounts[i] > 0 && amounts[i]<101, "MintBatch: amount/Tx prohibited");
 
             uint256 id=ids[i];
-            require(artSypply[id]<ART_SUPPLY, "MintBatch: Art max supply reached");
+            require(artSypply[id]<1000, "MintBatch: Art max supply reached");
             //uint balance=balanceOf(_to,id);
             //require(balance<=maxTx && amounts[id]<=maxTx, "MintBatch: Max/Tx reached");
 

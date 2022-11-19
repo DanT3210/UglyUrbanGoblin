@@ -14,7 +14,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const deployContract = await deploy('PaySplitter', {
     from: deployer,
     log: true,
-    args: [[deployer, addr1], [35, 65]],
+    args: [[deployer], [80]],
     // we need to wait if on a live network so we can verify properly
     waitConfirmations: network.config.blockConfirmations || 1,
   })
