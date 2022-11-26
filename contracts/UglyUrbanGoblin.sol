@@ -12,8 +12,8 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   
 
-  uint256  public MAX_PER_ACCT; 
-  uint256  public ART_SUPPLY;
+  /*uint256  public MAX_PER_ACCT; 
+  uint256  public ART_SUPPLY;*/
   uint256 private artPrice;
   string private name;
   string private symbol;
@@ -43,9 +43,9 @@ contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable, 
     require(amount > 0, "Mint: amount/Tx prohibited");
     require(balanceOf(_to,id)+amount < 101, "Mint: Supply/Tx reached");
     require(artSypply[id]<1000, "Mint: Art max supply reached");
-    require(msg.value>=artPrice*amount, "Mint: Needs more funds");    
+    require(msg.value>=artPrice*amount, "Mint: Needs more funds"); 
+     artSypply[id]+=amount;   
     _mint(_to, id, amount, "");
-    artSypply[id]+=amount;
     transferFunds(msg.value);
   }
 
