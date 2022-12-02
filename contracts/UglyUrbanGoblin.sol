@@ -96,7 +96,7 @@ contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable, 
   function updateArtPrice(uint256 _newPrice)public onlyOwner{
     artPrice=_newPrice;
   }  
-
+  //TEST
   function transferFunds(uint256 balance) private{ 
     require(payable(paySplitter).send(balance));
   }
