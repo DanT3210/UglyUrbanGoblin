@@ -41,8 +41,8 @@ contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable, 
   
   function mint(address _to, uint id, uint amount) external payable nonReentrant{
     require(amount > 0, "Mint: amount/Tx prohibited");
-    require(balanceOf(_to,id)+amount < 101, "Mint: Supply/Tx reached");
-    require(artSypply[id]<1000, "Mint: Art max supply reached");
+    require(balanceOf(_to,id)+amount <= 100, "Mint: Supply/Tx reached");
+    require(artSypply[id]<=1000, "Mint: Art max supply reached");
     require(msg.value>=artPrice*amount, "Mint: Needs more funds"); 
      artSypply[id]+=amount;   
     _mint(_to, id, amount, "");
