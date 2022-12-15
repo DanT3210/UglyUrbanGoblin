@@ -10,8 +10,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   //[addr1, addr2, addr3] = await ethers.getSigners();
 
   log('----------------------------------------------------')
-  log('Deploying PaySplitter and waiting for confirmations...')
-  const deployContract = await deploy('PaySplitter', {
+  log('Deploying MyPaySplitter and waiting for confirmations...')
+  const deployContract = await deploy('MyPaySplitter', {
     from: deployer,
     log: true,
     args: [[deployer], [80]],

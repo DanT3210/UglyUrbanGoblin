@@ -25,7 +25,7 @@ const { ethers, upgrades } = require("hardhat");
 const ART_PRICE = 100;
 const NAME="My Goblin";
 const SYMBOLE="UUG";
-const PAYSPLITER="0x64b91B14D28642C55Af08647Ce2D832ae1187f98";
+const PAYSPLITER="0x921C8A97d595164F8FE6d913E945f5AA36C4E4a5";
 async function main() {
  const GOBLIN = await ethers.getContractFactory("UglyUrbanGoblin");
 
