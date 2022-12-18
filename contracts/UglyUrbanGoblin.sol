@@ -81,7 +81,7 @@ contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable, 
     emit URI(_uri, _id);
   }
 
-  function uri(uint _id) public override view onlyOwner returns (string memory) {
+  function uri(uint _id) public override virtual view returns (string memory) {
     return tokenURI[_id];
   }
 
@@ -96,6 +96,14 @@ contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable, 
   function updateArtPrice(uint256 _newPrice)public onlyOwner{
     artPrice=_newPrice;
   }  
+
+  function getName()public view returns(string memory){
+    return name;
+  }
+
+  function getSymbol()public view returns(string memory){
+    return symbol;
+  }
   
   function transferFunds(uint256 balance) private{ 
     require(payable(paySplitter).send(balance));
