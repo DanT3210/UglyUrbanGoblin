@@ -14,7 +14,7 @@ describe("Minting Test", function () {
 
   it("Deployment", async function () {
     [owner, addr1, addr2, addr3] = await ethers.getSigners();
-    const UglyUrban = await ethers.getContractFactory("UglyUrbanGoblin");
+    const UglyUrban = await ethers.getContractFactory("NFT_Collection");
 
     GoblinContract = await UglyUrban.deploy();
 
@@ -30,10 +30,10 @@ describe("Minting Test", function () {
     
   }); 
 
-  it("Mint 10", async function(){
-    //const removeItem= await GoblinContract.mint(addr2.address,"1","10");
-    await expect(GoblinContract.mint(addr2.address,"1","10")).to.be.revertedWith("Mint: Needs more funds");
-    //await expect(GoblinContract.mint(addr2.address,"1","10")).to.be.revertedWith("Mint: amount/Tx prohibited");
+  it("Mint 6", async function(){
+    //const removeItem= await GoblinContract.mint(addr2.address,"1","5");
+    await expect(GoblinContract.mint(addr2.address,"1","6")).to.be.revertedWith("Mint: Art max supply reached");
+    //await expect(GoblinContract.mint(addr2.address,"1","6")).to.be.revertedWith("Mint: Supply/Tx reached");
     const mappinVar=await GoblinContract.balanceOf(addr2.address, "1");
     console.log(mappinVar.toString());
     assert.equal(mappinVar.toString(),"0");

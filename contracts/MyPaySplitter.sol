@@ -7,5 +7,4 @@ contract MyPaySplitter is PaymentSplitter{
 
     constructor(address[] memory payees, uint256[] memory shares_) PaymentSplitter(payees,shares_) payable{}
 
-
 }
