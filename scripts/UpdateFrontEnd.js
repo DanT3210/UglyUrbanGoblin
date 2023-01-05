@@ -14,13 +14,13 @@ module.exports = async () => {
 }
 
 async function updateAbi() {
-    const Goblin = await ethers.getContract("UglyUrbanGoblin");
+    const Goblin = await ethers.getContract("NFT_Collection");
     fs.writeFileSync(frontEndAbiFile, Goblin.interface.format(ethers.utils.FormatTypes.json));
     console.log("Upgraded ABI");
 }
 
 async function updateContractAddresses() {
-    const Goblin = await ethers.getContract("UglyUrbanGoblin");
+    const Goblin = await ethers.getContract("NFT_Collection");
     const contractAddresses = JSON.parse(fs.readFileSync(frontEndContractsFile, "utf8"));
     if (network.config.chainId.toString() in contractAddresses) {
         if (!contractAddresses[network.config.chainId.toString()].includes(Goblin.address)) {

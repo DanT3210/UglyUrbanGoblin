@@ -9,12 +9,13 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/common/ERC2981Upgradeable.sol";
 
+uint256 constant ART_SUPPLY=100;
 
-contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable,ERC2981Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract NFT_Collection is Initializable, UUPSUpgradeable, ERC1155Upgradeable,ERC2981Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   
 
   /*uint256  public MAX_PER_ACCT; */
-  uint256  public constant ART_SUPPLY=100;
+  
   uint256 private artPrice;
   string private name;
   string private symbol;
@@ -42,14 +43,18 @@ contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable,E
   ///@dev required by the OZ UUPS module
   function _authorizeUpgrade(address) internal override onlyOwner {}
   
+  function removeURI(uint _id) internal onlyOwner{
+    delete tokenURI[_id];
+  }
+  
   function mint(address _to, uint id, uint amount) external payable nonReentrant{
     require(amount > 0, "Mint: amount/Tx prohibited");
     require(artSypply[id]<=ART_SUPPLY, "Mint: Art max supply reached");
     require(balanceOf(_to,id)+amount<6, "Mint: Supply/Tx reached");
     require(msg.value>=artPrice*amount, "Mint: Needs more funds"); 
-     artSypply[id]+=amount;   
-    _mint(_to, id, amount, "");
-    transferFunds(msg.value);
+      artSypply[id]+=amount;   
+      _mint(_to, id, amount, "");
+      transferFunds(msg.value);
   }
 
   function mintBatch(address _to, uint[] memory ids, uint[] memory amounts) external onlyOwner {
@@ -66,6 +71,8 @@ contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable,E
   function burn(uint _id, uint _amount) external {
     require(balanceOf(_msgSender(),_id)>0,"BURN You're not an Owner");
     _burn(msg.sender, _id, _amount);
+    artSypply[_id]-=_amount; 
+    removeURI(_id);
   }
 
   function burnBatch(uint[] memory _ids, uint[] memory _amounts) external{
@@ -111,6 +118,24 @@ contract UglyUrbanGoblin is Initializable, UUPSUpgradeable, ERC1155Upgradeable,E
             super.supportsInterface(interfaceId)
         );
     }
+
+    function myRoyalty(uint96 feeNumerator) external onlyOwner {
+        _setDefaultRoyalty(paySplitter,feeNumerator);
+
+    }  
+
+     function myTokenRoyalty( uint256 tokenId, uint96 feeNumerator)external onlyOwner{
+      _setTokenRoyalty(tokenId,paySplitter,feeNumerator);
+
+     }
+
+     function removeDefaultRoyalty()external onlyOwner{
+      _deleteDefaultRoyalty();
+     }
+
+     function resetMyTokenRoyalty(uint tokenID)external onlyOwner{
+      _resetTokenRoyalty(tokenID);
+     }       
   
   function transferFunds(uint256 balance) private{ 
     require(payable(paySplitter).send(balance));

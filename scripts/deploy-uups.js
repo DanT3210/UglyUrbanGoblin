@@ -22,12 +22,12 @@ async function main() {
 main();*/
 const { ethers, upgrades } = require("hardhat");
 
-const ART_PRICE = 100;
-const NAME="My Goblin";
-const SYMBOLE="UUG";
+const ART_PRICE = 500000000;
+const NAME="Girls Mood Collection";
+const SYMBOLE="GMC";
 const PAYSPLITER="0x921C8A97d595164F8FE6d913E945f5AA36C4E4a5";
 async function main() {
- const GOBLIN = await ethers.getContractFactory("UglyUrbanGoblin");
+ const GOBLIN = await ethers.getContractFactory("NFT_Collection");
 
  console.log("Deploying implemantation...");
 

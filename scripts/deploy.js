@@ -3,7 +3,7 @@ const {ethers,run, network}=require("hardhat");
 
 
 async function main() {
-  const MainContract = await hre.ethers.getContractFactory("UglyUrbanGoblin");
+  const MainContract = await hre.ethers.getContractFactory("NFT_Collection");
   const contractMain=await MainContract.deploy();
   await contractMain.deployed();
 
