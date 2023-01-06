@@ -67,20 +67,20 @@ describe("Minting Test", function () {
   });  
 
   it("Burn Art not Owner", async function(){
-    await expect(GoblinContract.burn("1","10")).to.be.revertedWith("BURN You're not an Owner");
+    await expect(GoblinContract.burn("1","10")).to.be.revertedWith("ERC1155: burn amount exceeds balance");
   });
 
   it("BanceOff", async function(){
-    const balanceVar=await GoblinContract.balanceOf(addr2.address,"1");
+    const balanceVar=await GoblinContract.balanceOf(addr1.address,"1");
     console.log(balanceVar.toString());
   });
 
     //*************************REVIEW OWNER ADDR1***********************
-  /*it("Burn Art as Owner", async function(){
-    const burnVar=await GoblinContract.connect(addr1).burn("1","5");
+  it("Burn Art as Owner", async function(){
+    const burnVar=await GoblinContract.connect(addr2).burn("1","90");
     const artSupplyVar=await GoblinContract.totalArtSupply("1");
     console.log(artSupplyVar.toString());
-  });*/
+  });
   
   it("NFT Price", async function(){
     const Art_Price= await GoblinContract.getArtPrice();

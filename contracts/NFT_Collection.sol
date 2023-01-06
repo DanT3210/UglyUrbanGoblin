@@ -69,10 +69,13 @@ contract NFT_Collection is Initializable, UUPSUpgradeable, ERC1155Upgradeable,ER
   }
 
   function burn(uint _id, uint _amount) external {
-    require(balanceOf(_msgSender(),_id)>0,"BURN You're not an Owner");
+    //require(balanceOf(_msgSender(),_id)>0,"BURN You're not an Owner");
     _burn(msg.sender, _id, _amount);
     artSypply[_id]-=_amount; 
-    removeURI(_id);
+    if(_amount==ART_SUPPLY || artSypply[_id]==0){
+      removeURI(_id);
+    }
+    //removeURI(_id);
   }
 
   function burnBatch(uint[] memory _ids, uint[] memory _amounts) external{
