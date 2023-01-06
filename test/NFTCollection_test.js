@@ -35,7 +35,7 @@ describe("Minting Test", function () {
     console.log(artSupplyVar.toString());
   });
 
-  it("Mint 6", async function(){
+  it("Mint 6-Over Supply", async function(){
     //const removeItem= await GoblinContract.mint(addr2.address,"1","5");
     //await expect(GoblinContract.mint(addr2.address,"1","6")).to.be.revertedWith("Mint: Art max supply reached");
     await expect(GoblinContract.mint(addr2.address,"1","6")).to.be.revertedWith("Mint: Supply/Tx reached");
@@ -44,7 +44,7 @@ describe("Minting Test", function () {
     assert.equal(mappinVar.toString(),"0");*/
   });
 
-  it("Mint 5", async function(){
+  it("Mint Not enough Funds", async function(){
     //const removeItem= await GoblinContract.mint(addr2.address,"1","5");
     await expect(GoblinContract.mint(addr2.address,"1","5")).to.be.revertedWith("Mint: Needs more funds");
     //await expect(GoblinContract.mint(addr2.address,"1","6")).to.be.revertedWith("Mint: Supply/Tx reached");
@@ -54,14 +54,17 @@ describe("Minting Test", function () {
     //const mintVar=await GoblinContract.mint(addr1.address, "1", "5"); 
   });  
 
-  it("mintBatch 5", async function(){
+  it("mintBatch A1-5", async function(){
     const mintVar=await GoblinContract.mintBatch(addr1.address, [1], [5]); 
-    const artSupplyVar=await GoblinContract.totalArtSupply("1");
-    console.log(artSupplyVar.toString());
+    console.log("5 NFT minted to ADDR1");
   });
 
-  it("mintBatch 96", async function(){
+  it("mintBatch A2-95", async function(){
     const mintVar=await GoblinContract.mintBatch(addr2.address, [1], [95]); 
+    console.log("95 NFT minted to ADDR2");
+  });  
+
+  it("ArtSupply", async function(){
     const artSupplyVar=await GoblinContract.totalArtSupply("1");
     console.log(artSupplyVar.toString());
   });  
@@ -75,12 +78,27 @@ describe("Minting Test", function () {
     console.log(balanceVar.toString());
   });
 
-    //*************************REVIEW OWNER ADDR1***********************
-  it("Burn Art as Owner", async function(){
-    const burnVar=await GoblinContract.connect(addr2).burn("1","90");
-    const artSupplyVar=await GoblinContract.totalArtSupply("1");
-    console.log(artSupplyVar.toString());
+  it("Burn Art as Owner1", async function(){
+    const burnVar=await GoblinContract.connect(addr1).burn("1","5");
   });
+
+  it("Burn Art as Owner2", async function(){
+    const burn1Var=await GoblinContract.connect(addr2).burn("1","94");
+  });  
+
+  it("Burn Art as Owner2a", async function(){
+    const burn1Var=await GoblinContract.connect(addr2).burn("1","1");
+  });  
+
+  it("BanceOff", async function(){
+    const balanceVar=await GoblinContract.balanceOf(addr1.address,"1");
+    console.log(balanceVar.toString());
+  });  
+
+  it("BanceOff 2", async function(){
+    const balanceVar=await GoblinContract.balanceOf(addr2.address,"1");
+    console.log(balanceVar.toString());
+  });  
   
   it("NFT Price", async function(){
     const Art_Price= await GoblinContract.getArtPrice();
@@ -90,6 +108,11 @@ describe("Minting Test", function () {
   it("Set URI not Owner", async function(){
     await expect(GoblinContract.connect(addr2).setURI("1","ipfs://QmQwpJwqV9zmvdv7WidfkFX2nSaCBdmYKkUS8yrNzKXw2j/1.json")).to.be.revertedWith("Ownable: caller is not the owner");
   });
+
+  it("ArtSupply", async function(){
+    const artSupplyVar=await GoblinContract.totalArtSupply("1");
+    console.log(artSupplyVar.toString());
+  });  
 
   it("Set URI Owner", async function(){
     const setURI=await GoblinContract.setURI("1","ipfs://QmQwpJwqV9zmvdv7WidfkFX2nSaCBdmYKkUS8yrNzKXw2j/1.json");
