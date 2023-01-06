@@ -49,7 +49,7 @@ contract NFT_Collection is Initializable, UUPSUpgradeable, ERC1155Upgradeable,ER
   
   function mint(address _to, uint id, uint amount) external payable nonReentrant{
     require(amount > 0, "Mint: amount/Tx prohibited");
-    require(artSypply[id]==ART_SUPPLY, "Mint: Art max supply reached");
+    require(artSypply[id]+amount<=ART_SUPPLY, "Mint: Art max supply reached");
     require(balanceOf(_to,id)+amount<6, "Mint: Supply/Tx reached");
     require(msg.value>=artPrice*amount, "Mint: Needs more funds"); 
       artSypply[id]+=amount;   
@@ -62,7 +62,7 @@ contract NFT_Collection is Initializable, UUPSUpgradeable, ERC1155Upgradeable,ER
             require(amounts.length == ids.length, "MintBatch: amounts and ids length mismatch");
             require(amounts[i] > 0 && amounts[i]<=ART_SUPPLY, "MintBatch: amount/Tx prohibited");
             uint256 id=ids[i];
-            require(artSypply[id]==ART_SUPPLY, "MintBatch: Art max supply reached");
+            require(artSypply[id]+amounts[i]<=ART_SUPPLY, "MintBatch: Art max supply reached");
             artSypply[id]+=amounts[i];
         }    
     _mintBatch(_to, ids, amounts, "");
