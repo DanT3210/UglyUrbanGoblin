@@ -43,7 +43,7 @@ contract NFT_Collection is Initializable, UUPSUpgradeable, ERC1155Upgradeable,ER
   ///@dev required by the OZ UUPS module
   function _authorizeUpgrade(address) internal override onlyOwner {}
   
-  function removeURI(uint _id) internal onlyOwner{
+  function removeURI(uint _id) private onlyOwner{
     delete tokenURI[_id];
   }
   
