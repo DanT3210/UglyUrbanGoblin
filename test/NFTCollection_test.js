@@ -55,14 +55,14 @@ describe("Minting Test", function () {
   });  
 
   it("mintBatch A1-5", async function(){
-    const mintVar=await GoblinContract.mintBatch(addr1.address, [1], [5]); 
+    const mintVar=await GoblinContract.mintBatch(addr1.address, [1], [1]); 
     console.log("5 NFT minted to ADDR1");
   });
 
   it("mintBatch A2-95", async function(){
     const mintVar=await GoblinContract.mintBatch(addr2.address, [1], [95]); 
     console.log("95 NFT minted to ADDR2");
-  });  
+  });
 
   it("ArtSupply", async function(){
     const artSupplyVar=await GoblinContract.totalArtSupply("1");
@@ -73,32 +73,28 @@ describe("Minting Test", function () {
     await expect(GoblinContract.burn("1","10")).to.be.revertedWith("ERC1155: burn amount exceeds balance");
   });
 
-  it("BanceOff", async function(){
+  it("BanceOff-1", async function(){
     const balanceVar=await GoblinContract.balanceOf(addr1.address,"1");
     console.log(balanceVar.toString());
   });
 
   it("Burn Art as Owner1", async function(){
-    const burnVar=await GoblinContract.connect(addr1).burn("1","5");
+    const burnVar=await GoblinContract.connect(addr1).burn("1","1");
   });
 
-  it("Burn Art as Owner2", async function(){
-    const burn1Var=await GoblinContract.connect(addr2).burn("1","94");
-  });  
+  /*it("Burn Art as Owner2", async function(){
+    const burn1Var=await GoblinContract.connect(addr2).burn("1","95");
+  });  */
 
-  it("Burn Art as Owner2a", async function(){
-    const burn1Var=await GoblinContract.connect(addr2).burn("1","1");
-  });  
-
-  it("BanceOff", async function(){
+  it("BanceOff-1", async function(){
     const balanceVar=await GoblinContract.balanceOf(addr1.address,"1");
     console.log(balanceVar.toString());
   });  
 
-  it("BanceOff 2", async function(){
+  /*it("BanceOff 2", async function(){
     const balanceVar=await GoblinContract.balanceOf(addr2.address,"1");
     console.log(balanceVar.toString());
-  });  
+  });  */
   
   it("NFT Price", async function(){
     const Art_Price= await GoblinContract.getArtPrice();
