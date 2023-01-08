@@ -25,7 +25,9 @@ const { ethers, upgrades } = require("hardhat");
 const ART_PRICE = 500000000;
 const NAME="Girls Mood Collection";
 const SYMBOLE="GMC";
-const PAYSPLITER="0x921C8A97d595164F8FE6d913E945f5AA36C4E4a5";
+const PAYSPLITER="0x1A97e0A41333d6d58E42aeDD23Eb92f80805B536";
+//Polygon-PaySplitter:0x1A97e0A41333d6d58E42aeDD23Eb92f80805B536
+//Goerli-PaySplitter: 0x921C8A97d595164F8FE6d913E945f5AA36C4E4a5
 async function main() {
  const GOBLIN = await ethers.getContractFactory("NFT_Collection");
 
