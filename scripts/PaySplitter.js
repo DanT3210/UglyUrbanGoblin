@@ -8,7 +8,8 @@ async function main() {
   const { deployer} = await getNamedAccounts();
   //Goerli addr1="0xA58f464C7A744333a409d2f8EA3BE08EABc5b203";
   addr1="0x024ea54cb67a2ea5c74821fb27b72c77daa6a50a";
-  //Polygon CGF---0x024ea54cb67a2ea5c74821fb27b72c77daa6a50a
+  //Mainet Artis Addr CGF---0x024ea54cb67a2ea5c74821fb27b72c77daa6a50a
+  
 
   const MainContract = await hre.ethers.getContractFactory("MyPaySplitter");
   const contractMain=await MainContract.deploy([deployer,addr1],[80,20]);
