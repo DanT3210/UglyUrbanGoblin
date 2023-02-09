@@ -9,7 +9,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   log('----------------------------------------------------')
   log('Deploying Contract and waiting for confirmations...')
-  const deployContract = await deploy('UglyUrbanGoblin', {
+  const deployContract = await deploy('NFT_Collection', {
     from: deployer,
     log: true,
     args: [],
