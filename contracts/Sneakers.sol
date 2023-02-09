@@ -13,8 +13,6 @@ contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
-    
-    uint256 public cost;
 
     string public uriPrefix = "";
     string public uriSuffix = ".json";
@@ -30,17 +28,13 @@ contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable {
     }
 
     //GETTERS//
+    function getPrice(uint id_)public view returns(uint){
+        return sneakersPrice[id_];
+    }     
+
     function totalSneakers() public view returns (uint256) {
         return _tokenIdCounter.current();
     }   
-
-    function contractAmount()public view returns(uint256){
-        return address(this).balance;
-    }
-
-    function publish(uint256 qty_, string  memory uri_, uint256[] memory price_) public{
-        _mintLoop(msg.sender, qty_, uri_, price_);
-    }
 
     // The following functions are overrides required by Solidity.
     function tokenURI(uint256 _tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory){
@@ -56,6 +50,20 @@ contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable {
             super.supportsInterface(interfaceId)
         );
     }    
+
+    //Publish and Buy
+    function publish(uint256 qty_, string  memory uri_, uint256[] memory price_) public{
+        _mintLoop(_msgSender(), qty_, uri_, price_);
+    }
+    
+    function buy(address from, uint256 tokenId) public payable{
+        require(msg.value>=getPrice(tokenId), "ERROR:Need more fund");
+        address to=_msgSender();
+        _approve(to, tokenId);
+        safeTransferFrom(from,to, tokenId, "");
+        transferFunds(msg.value);
+    }    
+
 
     //INTERNALS//
     function _mintLoop(address _receiver, uint256 _mintAmount, string  memory uri_, uint256[] memory price_) internal {
@@ -93,11 +101,7 @@ contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable {
          _burn(tokenId);
      }  
      
-    function transferFunds(uint256 balance) external onlyOwner{ 
+    function transferFunds(uint256 balance) internal{ 
       require(payable(paySplitter).send(balance));
     }      
-
-    function getPrice(uint id_)public view returns(uint){
-        return sneakersPrice[id_];
-    }     
 }
