@@ -2,13 +2,14 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 
 
-contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable {
+contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable, ReentrancyGuard {
     using Strings for uint256;
     using Counters for Counters.Counter;
 
@@ -18,13 +19,17 @@ contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable {
     string public uriSuffix = ".json";
     address payable private paySplitter;
 
+    //Sneaker Price List
     mapping(uint id => uint price) private sneakersPrice;
+
+    //Seller amount list
+    mapping(address seller=>uint amount) private sellerBalance;
 
     receive() external payable {}
 
-    constructor(address payable payment) ERC721("Sneaker Market", "SNKRS") {
-        paySplitter=payment;
-        _setDefaultRoyalty(paySplitter,200);
+    constructor(address payable payment_) ERC721("Sneaker Market", "SNKRS") {
+        paySplitter=payment_;
+        //_setDefaultRoyalty(_msgSender(),100);
     }
 
     //GETTERS//
@@ -35,6 +40,10 @@ contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable {
     function totalSneakers() public view returns (uint256) {
         return _tokenIdCounter.current();
     }   
+
+    function getSellerAmount()public view returns(uint256){
+        return sellerBalance[_msgSender()];
+    }
 
     // The following functions are overrides required by Solidity.
     function tokenURI(uint256 _tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory){
@@ -51,57 +60,61 @@ contract sneakers is ERC721, ERC721URIStorage,ERC2981, Ownable {
         );
     }    
 
-    //Publish and Buy
-    function publish(uint256 qty_, string  memory uri_, uint256[] memory price_) public{
-        _mintLoop(_msgSender(), qty_, uri_, price_);
+    //Publish, Buy & Withdraw
+    function Publish(uint256 qty_, string  memory uri_, uint256[] memory price_) public{
+        address owner=_msgSender();
+            _mintLoop(owner, qty_, uri_, price_);
+            //_setDefaultRoyalty(owner,100);
     }
-    
-    function buy(address from, uint256 tokenId) public payable{
-        require(msg.value>=getPrice(tokenId), "ERROR:Need more fund");
+  
+    function Buy(address from_, uint256 tokenId_) public payable nonReentrant{
+        require(msg.value>=getPrice(tokenId_), "ERROR:Need more fund");
         address to=_msgSender();
-        _approve(to, tokenId);
-        safeTransferFrom(from,to, tokenId, "");
-        transferFunds(msg.value);
+            _approve(to, tokenId_);
+            safeTransferFrom(from_,to, tokenId_, "");
+            transferFunds(msg.value, from_);
     }    
 
+    function Withdraw()public payable nonReentrant{
+        address seller=_msgSender();
+        require(sellerBalance[seller]>0, "ERROR: No funds to Withdraw");
+        uint amount = sellerBalance[seller];
+            require(address(this).balance >= amount, "Address: insufficient balance");
+                (bool success, ) = seller.call{value: amount}("");
+                require(success, "Address: unable to send value, recipient may have reverted");  
+        sellerBalance[seller] -= amount;   
+            
+    }
 
     //INTERNALS//
-    function _mintLoop(address _receiver, uint256 _mintAmount, string  memory uri_, uint256[] memory price_) internal {
-        require(price_.length==_mintAmount, "ERROR: Price lenght doesn't match Qty");
-        for (uint256 i = 0; i < _mintAmount; i++) {
+    function _mintLoop(address receiver_, uint256 mintAmount_, string  memory uri_, uint256[] memory price_) internal {
+        require(price_.length==mintAmount_, "ERROR: Price lenght doesn't match Qty");
+        for (uint256 i = 0; i<mintAmount_; i++) {
             _tokenIdCounter.increment();
             uint256 counter=_tokenIdCounter.current();
-            _safeMint(_receiver, counter);
-            uriPrefix=uri_;
-            tokenURI(counter);
-            sneakersPrice[counter]=price_[i];
+                _safeMint(receiver_, counter);
+                uriPrefix=uri_;
+                tokenURI(counter);
+                sneakersPrice[counter]=price_[i];
         }
     }    
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-        super._burn(tokenId);
+    function _burn(uint256 tokenId_) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId_);
     }  
 
-    //EXTERNAL//
-    function myRoyalty(uint96 feeNumerator) external onlyOwner {
-        _setDefaultRoyalty(paySplitter,feeNumerator);
+    function transferFunds(uint256 balance_, address from_) internal{ 
+     uint256 devFee=devFeeCalculation(balance_);
+     require(payable(paySplitter).send(devFee));
+     sellerBalance[from_]+=balance_-devFee;
+    }          
 
-    }  
-
-     function myTokenRoyalty( uint256 tokenId, uint96 feeNumerator)external onlyOwner{
-      _setTokenRoyalty(tokenId,paySplitter,feeNumerator);
-
-     }
-
-     function resetMyTokenRoyalty(uint tokenID)external onlyOwner{
-      _resetTokenRoyalty(tokenID);
-     }     
-
-     function remove(uint tokenId)external onlyOwner{
-         _burn(tokenId);
+    function remove(uint tokenId_)external onlyOwner{
+        _burn(tokenId_);
      }  
-     
-    function transferFunds(uint256 balance) internal{ 
-      require(payable(paySplitter).send(balance));
-    }      
+
+    //OWNER/DEVELOPER FEE PER COMPLETED TX//
+    function devFeeCalculation(uint256 itemPrice_)private pure returns(uint256){
+        return (itemPrice_*5/100);
+    }        
 }
